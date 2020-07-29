@@ -15,19 +15,25 @@ export default class App extends Component {
     filter: "",
   };
 
-  addContact = (name, number) => {
-    
-    const contact = {
-      id: uuidv4(),
-      name,
-      number,
-    };
+  addContact = (task) => {
+    const searchSameName = this.state.contacts
+      .map((cont) => cont.name)
+      .includes(task.name);
 
-    this.setState(prevState => {
-      return {
-        contacts: [...prevState.contacts, contact],
+    if (searchSameName) {
+      alert(`${task.name} is already in contacts`);
+    } else if (task.name.length === 0) {
+      alert("Fields must be filled!");
+    } else {
+      const contact = {
+        ...task,
+        id: uuidv4(),
       };
-    });
+
+      this.setState((prevState) => ({
+        contacts: [...prevState.contacts, contact],
+      }));
+    }
   };
 
   changeFilter = (filter) => {
@@ -42,8 +48,8 @@ export default class App extends Component {
     );
   };
 
-  removeContact = contactId => {
-    this.setState(prevState => {
+  removeContact = (contactId) => {
+    this.setState((prevState) => {
       return {
         contacts: prevState.contacts.filter(({ id }) => id !== contactId),
       };
@@ -65,7 +71,10 @@ export default class App extends Component {
           <Filter value={filter} onChangeFilter={this.changeFilter} />
         )}
         {visibleContacts.length > 0 && (
-          <ContactList contacts={visibleContacts} onRemoveContact={this.removeContact}/>
+          <ContactList
+            contacts={visibleContacts}
+            onRemoveContact={this.removeContact}
+          />
         )}
       </div>
     );
